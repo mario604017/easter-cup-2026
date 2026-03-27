@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easter Cup 2026 — Molteno U16M v1.5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --red:    #e8192c;
+  --red2:   #b01020;
+  --dark:   #0f0f0f;
+  --d2:     #181818;
+  --d3:     #222;
+  --d4:     #2a2a2a;
+  --border: #303030;
+  --text:   #e8e8e8;
+  --muted:  #666;
+  --green:  #22c55e;
+  --gold:   #f59e0b;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--dark); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(160deg, #200000 0%, #1a1a1a 50%, #0d0d0d 100%);
+  border-bottom: 3px solid var(--red);
+  padding: 20px 24px 16px;
+}
+.hdr-row { display:flex; align-items:center; gap:16px; }
+.crest {
+  width:58px; height:58px; border-radius:50%;
+  background: radial-gradient(circle at 40% 35%, #ff4455, var(--red2));
+  border: 3px solid rgba(255,255,255,.15);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue',sans-serif; font-size:9px; letter-spacing:1px;
+  color:#fff; text-align:center; line-height:1.4; flex-shrink:0;
+  box-shadow: 0 0 24px rgba(232,25,44,.4);
+}
+.hdr-text h1 {
+  font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:3px;
+  color:#fff; line-height:1;
+}
+.hdr-text p { font-size:11px; color:var(--muted); letter-spacing:1px; margin-top:4px; }
+.hdr-badge {
+  margin-left:auto;
+  background:rgba(232,25,44,.15); border:1px solid rgba(232,25,44,.4);
+  border-radius:8px; padding:8px 16px; text-align:center;
+}
+.hdr-badge .bb { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--red); line-height:1; }
+.hdr-badge .bs { font-size:10px; color:var(--muted); letter-spacing:.8px; }
+
+/* ── CLASSIFICA ── */
+.standings-wrap {
+  margin: 20px 24px 0;
+  background: var(--d2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.st-title {
+  padding: 12px 18px;
+  background: linear-gradient(90deg, rgba(232,25,44,.12), transparent);
+  border-bottom: 1px solid var(--border);
+  font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px;
+  color:var(--red); display:flex; align-items:center; gap:8px;
+}
+.st-table { width:100%; border-collapse:collapse; }
+.st-table th {
+  padding: 7px 16px; font-size:10px; font-weight:700; letter-spacing:.8px;
+  color:var(--muted); text-transform:uppercase; text-align:center;
+  background:var(--d3); border-bottom:1px solid var(--border);
+}
+.st-table th:first-child { text-align:left; }
+.st-table td {
+  padding: 9px 16px; font-size:13px; text-align:center;
+  border-bottom: 1px solid #1e1e1e;
+}
+.st-table td:first-child { text-align:left; }
+.st-table tr:last-child td { border-bottom:none; }
+.st-table tr:hover td { background:rgba(255,255,255,.03); }
+
+/* riga Molteno — sfondo neutro, solo nome giallo */
+.row-molteno td { background: transparent !important; }
+.row-molteno:hover td { background:rgba(255,255,255,.03) !important; }
+
+/* posizioni */
+.pos-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:50%;
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+}
+.pos-1 { background:rgba(245,158,11,.2); color:var(--gold); border:1px solid rgba(245,158,11,.4); }
+.pos-2 { background:rgba(180,180,180,.15); color:#ccc; border:1px solid rgba(180,180,180,.3); }
+.pos-3 { background:rgba(180,100,50,.2); color:#cd7f32; border:1px solid rgba(180,100,50,.3); }
+.pos-n { background:var(--d4); color:var(--muted); border:1px solid var(--border); }
+
+.team-cell { display:flex; align-items:center; gap:10px; }
+.team-name-st { font-weight:600; font-size:13px; }
+/* MOLTENO: giallo vivo, nessun bollino */
+.team-name-st.is-molteno { color:#ffe033; font-weight:800; }
+.molteno-dot { display:none; }
+
+.pts-cell { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; }
+.pts-cell.top { color:var(--gold); }
+.pts-cell.molteno-pts { color:#ffe033; }
+
+.dr-cell { font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+.dr-pos { color:var(--green); }
+.dr-neg { color:#f87171; }
+
+/* ── SEZIONE PARTITE ── */
+.section-hdr {
+  margin: 20px 24px 0;
+  display:flex; align-items:center; gap:10px;
+}
+.section-hdr h2 {
+  font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:var(--text);
+}
+.section-line { flex:1; height:1px; background:var(--border); }
+.section-sub  { font-size:11px; color:var(--muted); }
+
+/* ── LISTA PARTITE ── */
+.matches { margin:12px 24px 0; display:flex; flex-direction:column; gap:6px; }
+
+.match-card {
+  background: var(--d2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items:center; gap:0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.match-card:hover { border-color:#444; background:var(--d3); }
+
+/* Molteno match */
+.match-card.molteno {
+  border-color: rgba(232,25,44,.4);
+  background: linear-gradient(90deg, rgba(232,25,44,.06), var(--d2));
+}
+.match-card.molteno:hover { border-color:var(--red); background:rgba(232,25,44,.1); }
+
+/* Finale potenziale */
+.match-card.finale-pot {
+  border-color: rgba(245,158,11,.3);
+  background: linear-gradient(90deg, rgba(245,158,11,.05), var(--d2));
+}
+.match-card.finale-pot:hover { border-color:var(--gold); }
+
+/* Colore bordo sinistro */
+.match-card .side-bar {
+  width:4px; align-self:stretch; flex-shrink:0;
+}
+
+/* Slot ORA */
+.mc-time {
+  padding: 0 14px; min-width:70px; text-align:center; flex-shrink:0;
+}
+.mc-time .t { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:var(--gold); }
+.mc-time .d { font-size:9px; color:var(--muted); letter-spacing:.5px; margin-top:2px; }
+
+/* Separatore */
+.mc-sep { width:1px; background:var(--border); align-self:stretch; flex-shrink:0; }
+
+/* Venue */
+.mc-venue {
+  padding: 0 12px; min-width:90px; flex-shrink:0;
+}
+.mc-venue .v { font-size:10px; font-weight:700; letter-spacing:.5px; color:var(--text); }
+.mc-venue .vs { font-size:9px; color:var(--muted); margin-top:2px; }
+
+/* Teams */
+.mc-teams {
+  flex:1; padding:12px 16px; display:flex; flex-direction:column; gap:5px;
+}
+.teams-line { display:flex; align-items:center; gap:8px; }
+.mc-tname {
+  flex:1; font-weight:600; font-size:13px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px;
+}
+.mc-tname.is-molteno { color:var(--red); font-weight:800; font-size:14px; }
+.mc-tname.winner { color:var(--green); }
+.mc-tname.loser  { color:var(--muted); text-decoration:line-through; text-decoration-color:#444; }
+.mc-score {
+  font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700;
+  min-width:24px; text-align:right;
+}
+.mc-score.winner-s { color:var(--green); }
+.mc-score.loser-s  { color:var(--muted); }
+.mc-score.empty    { color:var(--border); }
+.score-divider {
+  width:1px; height:28px; background:var(--border);
+  flex-shrink:0; margin:0 4px;
+}
+
+/* Stato */
+.mc-status {
+  padding:0 14px; flex-shrink:0; text-align:center; min-width:72px;
+}
+.status-pill {
+  display:inline-block; padding:3px 9px; border-radius:12px;
+  font-size:10px; font-weight:700; letter-spacing:.4px;
+}
+.sp-done  { background:rgba(34,197,94,.15); color:var(--green); border:1px solid rgba(34,197,94,.3); }
+.sp-live  { background:rgba(232,25,44,.2);  color:#ff6b7a;      border:1px solid rgba(232,25,44,.4); animation:pulse 1.5s infinite; }
+.sp-next  { background:rgba(245,158,11,.1); color:var(--gold);  border:1px solid rgba(245,158,11,.25); }
+.sp-tbd   { background:var(--d4);           color:var(--muted); border:1px solid var(--border); }
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+/* Etichette */
+.mc-labels { display:flex; flex-direction:column; gap:3px; align-items:flex-end; margin-right:4px; }
+.lbl-molteno {
+  font-size:9px; font-weight:700; letter-spacing:.5px;
+  background:var(--red); color:#fff; padding:2px 7px; border-radius:3px;
+}
+.lbl-final {
+  font-size:9px; font-weight:700; letter-spacing:.4px;
+  background:rgba(245,158,11,.2); color:var(--gold);
+  border:1px solid rgba(245,158,11,.35); padding:2px 7px; border-radius:3px;
+}
+
+/* ── SEPARATORE GIORNO ── */
+.day-sep {
+  margin:20px 24px 0;
+  display:flex; align-items:center; gap:12px;
+}
+.day-pill {
+  background:var(--red); color:#fff;
+  font-family:'Bebas Neue',sans-serif; font-size:11px; letter-spacing:1.5px;
+  padding:4px 14px; border-radius:20px; flex-shrink:0;
+  box-shadow:0 2px 12px rgba(232,25,44,.35);
+}
+.day-name { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; }
+.day-line { flex:1; height:1px; background:var(--border); }
+.day-count { font-size:11px; color:var(--muted); white-space:nowrap; }
+
+/* ── MODAL ── */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.85); z-index:999;
+  align-items:center; justify-content:center;
+}
+.overlay.open { display:flex; }
+.modal {
+  background:var(--d2); border:1px solid var(--border);
+  border-top:3px solid var(--red); border-radius:14px;
+  width:340px; max-width:95vw; padding:24px;
+  box-shadow:0 50px 100px rgba(0,0,0,.7);
+}
+.modal h3 {
+  font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; margin-bottom:2px;
+}
+.modal-meta { font-size:11px; color:var(--muted); margin-bottom:20px; }
+.modal-body { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.mb-team { flex:1; text-align:center; }
+.mb-team-name { font-weight:700; font-size:13px; margin-bottom:8px; line-height:1.3; }
+.mb-team-name.is-molteno { color:var(--red); }
+.score-inp {
+  width:60px; height:52px; background:var(--d3); border:2px solid var(--border);
+  border-radius:8px; color:#fff; font-family:'JetBrains Mono',monospace;
+  font-size:26px; font-weight:700; text-align:center; outline:none; transition:border-color .15s;
+}
+.score-inp:focus { border-color:var(--red); }
+
+/* Input nome avversario nelle finali */
+.opponent-row {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:14px; padding:10px 14px;
+  background:var(--d3); border:1px solid var(--border); border-radius:8px;
+}
+.opponent-row label { font-size:11px; color:var(--muted); font-weight:600; letter-spacing:.5px; white-space:nowrap; }
+.opponent-inp {
+  flex:1; background:transparent; border:none; border-bottom:1px solid var(--border);
+  color:#fff; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  padding:4px 6px; outline:none; transition:border-color .15s; text-transform:uppercase;
+}
+.opponent-inp:focus { border-bottom-color:var(--gold); }
+.opponent-inp::placeholder { color:var(--muted); text-transform:none; font-weight:400; }
+.mb-vs { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--muted); flex-shrink:0; }
+.modal-btns { display:flex; gap:8px; }
+.btn-save {
+  flex:1; padding:11px; background:var(--red); border:none; border-radius:8px;
+  color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s;
+}
+.btn-save:hover { background:var(--red2); }
+.btn-del { padding:11px 14px; background:var(--d3); border:1px solid var(--border); border-radius:8px; color:var(--muted); font-size:12px; cursor:pointer; }
+.btn-del:hover { border-color:#f87171; color:#f87171; }
+.btn-cancel { padding:11px 14px; background:var(--d3); border:1px solid var(--border); border-radius:8px; color:var(--muted); font-size:12px; cursor:pointer; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:22px; right:22px;
+  background:var(--green); color:#000; padding:9px 16px; border-radius:8px;
+  font-size:13px; font-weight:700; z-index:2000;
+  transform:translateY(60px); opacity:0; transition:all .3s;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+
+/* padding bottom */
+.pb { height:40px; }
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--dark); }
+::-webkit-scrollbar-thumb { background:#333; border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--red); }
+
+@media(max-width:640px){
+  .path-grid { flex-direction:column; }
+  .path-card { border-right:none; border-bottom:1px solid var(--border); }
+  .mc-venue { display:none; }
+  .mc-tname { max-width:110px; }
+  .hdr-badge { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-row">
+    <div class="crest">HC<br>MOLT<br>ENO</div>
+    <div class="hdr-text">
+      <h1>3° EASTER CUP 2026</h1>
+      <p>U16 MASCHILE · GIRONE B · 3–5 APRILE · IMOLA</p>
+    </div>
+    <div class="hdr-badge">
+      <div class="bb" id="hdr-pos">–</div>
+      <div class="bs">POS. GIRONE</div>
+    </div>
+  </div>
+</header>
+
+<!-- CLASSIFICA GIRONE B -->
+<div class="standings-wrap">
+  <div class="st-title">📊 CLASSIFICA GIRONE B</div>
+  <table class="st-table" id="standings-table">
+    <thead><tr>
+      <th style="width:36px"></th>
+      <th style="text-align:left">Squadra</th>
+      <th>G</th><th>V</th><th>P</th><th>GF</th><th>GS</th><th>DR</th><th>Pt</th>
+    </tr></thead>
+    <tbody id="standings-body"></tbody>
+  </table>
+</div>
+
+<!-- PARTITE -->
+<div id="matches-container"></div>
+
+<div class="pb"></div>
+
+<!-- MODAL -->
+<div class="overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <h3 id="m-title">INSERISCI RISULTATO</h3>
+    <div class="modal-meta" id="m-meta"></div>
+    <!-- Riga avversario — visibile solo nelle finali -->
+    <div class="opponent-row" id="m-opponent-row" style="display:none">
+      <label>⚔️ AVVERSARIO</label>
+      <input class="opponent-inp" id="m-opponent" type="text" placeholder="Nome squadra avversaria..." maxlength="40">
+    </div>
+    <div class="modal-body">
+      <div class="mb-team">
+        <div class="mb-team-name" id="m-t1"></div>
+        <input class="score-inp" id="m-s1" type="number" min="0" max="99" placeholder="–">
+      </div>
+      <div class="mb-vs">:</div>
+      <div class="mb-team">
+        <div class="mb-team-name" id="m-t2"></div>
+        <input class="score-inp" id="m-s2" type="number" min="0" max="99" placeholder="–">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-save"   onclick="saveResult()">💾 SALVA</button>
+      <button class="btn-del"    onclick="clearResult()">✕ Cancella</button>
+      <button class="btn-cancel" onclick="closeModal()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   DATI — Girone B U16M
+   Squadre: Imola, Rubiera, MOLTENO, Vicenza, Follonica, Karalis
+   ============================================================ */
+
+const TEAMS_B = ['IMOLA','RUBIERA','MOLTENO','VICENZA','FOLLONICA','KARALIS'];
+
+// Partite girone B (giorni 1 e 2)
+const GIRONE_B = [
+  // ── VENERDÌ 3 APRILE ──
+  { id:65,  day:1, time:'11:00', team1:'IMOLA',     team2:'RUBIERA',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:66,  day:1, time:'12:30', team1:'MOLTENO',   team2:'VICENZA',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:67,  day:1, time:'14:45', team1:'FOLLONICA',  team2:'KARALIS',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:68,  day:1, time:'16:15', team1:'IMOLA',     team2:'MOLTENO',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:69,  day:1, time:'17:45', team1:'RUBIERA',   team2:'FOLLONICA', venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:70,  day:1, time:'18:30', team1:'VICENZA',   team2:'KARALIS',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  // ── SABATO 4 APRILE ──
+  { id:72,  day:2, time:'08:30', team1:'MOLTENO',   team2:'FOLLONICA', venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:71,  day:2, time:'09:15', team1:'IMOLA',     team2:'VICENZA',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:73,  day:2, time:'10:00', team1:'RUBIERA',   team2:'KARALIS',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:74,  day:2, time:'12:15', team1:'IMOLA',     team2:'FOLLONICA', venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:75,  day:2, time:'13:00', team1:'RUBIERA',   team2:'VICENZA',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:76,  day:2, time:'15:00', team1:'MOLTENO',   team2:'KARALIS',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:77,  day:2, time:'18:00', team1:'IMOLA',     team2:'KARALIS',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:78,  day:2, time:'18:45', team1:'RUBIERA',   team2:'MOLTENO',   venue:'Imola', vfull:'Pal. Cavina — Imola' },
+  { id:79,  day:2, time:'19:30', team1:'VICENZA',   team2:'FOLLONICA', venue:'Imola', vfull:'Pal. Cavina — Imola' },
+];
+
+/* ============================================================
+   DOMENICA 5 APRILE — Molteno fa esattamente 2 partite:
+   PARTITA 1 (mattina): incrocio con stessa posizione girone A
+   PARTITA 2 (pomeriggio): finale per posizione (vs omologo CD)
+   ============================================================ */
+const DOMENICA = {
+  1: {
+    p1: { id:'dom_1_p1', time:'08:30', venue:'Faenza', vfull:'Pala Cattani — Faenza',
+          avv:'2° Gir.A', label:'Incrocio mattina' },
+    p2v:{ id:'dom_1_p2v', time:'21:15', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🏆 Finale 1°-2°', isGrande:true },
+    p2p:{ id:'dom_1_p2p', time:'18:15', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🥉 Finale 3°-4°' },
+  },
+  2: {
+    p1: { id:'dom_2_p1', time:'09:15', venue:'Faenza', vfull:'Pala Cattani — Faenza',
+          avv:'1° Gir.A', label:'Incrocio mattina' },
+    p2v:{ id:'dom_2_p2v', time:'21:15', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🏆 Finale 1°-2°', isGrande:true },
+    p2p:{ id:'dom_2_p2p', time:'18:15', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🥉 Finale 3°-4°' },
+  },
+  3: {
+    p1: { id:'dom_3_p1', time:'12:15', venue:'Imola', vfull:'Pal. Cavina — Imola',
+          avv:'3° Gir.A', label:'Incrocio mattina' },
+    p2v:{ id:'dom_3_p2v', time:'17:30', venue:'Imola',   vfull:'Pal. Cavina — Imola',
+          avv:'?', label:'🏅 Finale 5°-6°' },
+    p2p:{ id:'dom_3_p2p', time:'17:30', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🏅 Finale 7°-8°' },
+  },
+  4: {
+    p1: { id:'dom_4_p1', time:'11:30', venue:'Faenza', vfull:'Pala Cattani — Faenza',
+          avv:'4° Gir.A', label:'Incrocio mattina' },
+    p2v:{ id:'dom_4_p2v', time:'16:45', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🏅 Finale 9°-10°' },
+    p2p:{ id:'dom_4_p2p', time:'16:00', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🏅 Finale 11°-12°' },
+  },
+  5: {
+    p1: { id:'dom_5_p1', time:'10:45', venue:'Faenza', vfull:'Pala Cattani — Faenza',
+          avv:'5° Gir.A', label:'Incrocio mattina' },
+    p2v:{ id:'dom_5_p2v', time:'15:15', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🏅 Finale 17°-18°' },
+    p2p:{ id:'dom_5_p2p', time:'16:00', venue:'Imola',   vfull:'Pal. Cavina — Imola',
+          avv:'?', label:'🏅 Finale 19°-20°' },
+  },
+  6: {
+    p1: { id:'dom_6_p1', time:'10:00', venue:'Faenza', vfull:'Pala Cattani — Faenza',
+          avv:'6° Gir.A', label:'Incrocio mattina' },
+    p2v:{ id:'dom_6_p2v', time:'14:30', venue:'Imola',   vfull:'Pal. Cavina — Imola',
+          avv:'?', label:'🏅 Finale 21°-22°' },
+    p2p:{ id:'dom_6_p2p', time:'14:30', venue:'Mordano', vfull:'Pal. A. Moro — Mordano',
+          avv:'?', label:'🏅 Finale 23°-24°' },
+  },
+};
+
+// ── localStorage ──
+const SKEY = 'easter26_molteno_v1';
+let RES = {};
+function loadRes() { try { RES = JSON.parse(localStorage.getItem(SKEY)||'{}'); } catch(e){} }
+function saveRes() { localStorage.setItem(SKEY, JSON.stringify(RES)); }
+
+let currentId = null;
+
+// ── Calcola classifica ──
+function calcStandings() {
+  const stats = {};
+  TEAMS_B.forEach(t => stats[t] = { name:t, g:0, v:0, p:0, d:0, gf:0, gs:0, pts:0 });
+
+  GIRONE_B.forEach(m => {
+    const r = RES[m.id];
+    if (!r || r.s1 === '' || r.s2 === '') return;
+    const t1 = m.team1, t2 = m.team2;
+    const s1 = +r.s1, s2 = +r.s2;
+    stats[t1].g++; stats[t2].g++;
+    stats[t1].gf += s1; stats[t1].gs += s2;
+    stats[t2].gf += s2; stats[t2].gs += s1;
+    if (s1 > s2)      { stats[t1].v++; stats[t1].pts+=2; stats[t2].p++; }
+    else if (s2 > s1) { stats[t2].v++; stats[t2].pts+=2; stats[t1].p++; }
+    else              { stats[t1].d++; stats[t1].pts++; stats[t2].d++; stats[t2].pts++; }
+  });
+
+  return Object.values(stats).sort((a,b) =>
+    b.pts - a.pts || (b.gf-b.gs)-(a.gf-a.gs) || b.gf - a.gf
+  );
+}
+
+function getMoltenoPos() {
+  const st = calcStandings();
+  return st.findIndex(s => s.name === 'MOLTENO') + 1;
+}
+
+// ── RENDER ──
+function render() {
+  renderStandings();
+  renderMatches();
+  const pos = getMoltenoPos();
+  const posText = ['–','1°','2°','3°','4°','5°','6°'][pos] || '–';
+  document.getElementById('hdr-pos').textContent = posText;
+}
+
+function renderStandings() {
+  const st = calcStandings();
+  const posClasses = ['pos-1','pos-2','pos-3','pos-n','pos-n','pos-n'];
+  let html = '';
+  st.forEach((s, i) => {
+    const isMolt = s.name === 'MOLTENO';
+    const dr = s.gf - s.gs;
+    const drCls = dr > 0 ? 'dr-pos' : dr < 0 ? 'dr-neg' : '';
+    html += `
+    <tr class="${isMolt ? 'row-molteno' : ''}">
+      <td><span class="pos-badge ${posClasses[i]}">${i+1}</span></td>
+      <td>
+        <div class="team-cell">
+          ${isMolt ? '<div class="molteno-dot"></div>' : ''}
+          <span class="team-name-st ${isMolt?'is-molteno':''}">${isMolt?'🔴 ':''}${s.name}</span>
+        </div>
+      </td>
+      <td>${s.g}</td>
+      <td>${s.v}</td>
+      <td>${s.p}</td>
+      <td>${s.gf}</td>
+      <td>${s.gs}</td>
+      <td class="dr-cell ${drCls}">${dr>0?'+':''}${dr}</td>
+      <td><span class="pts-cell ${i===0?'top':''}${isMolt?' molteno-pts':''}">${s.pts}</span></td>
+    </tr>`;
+  });
+  document.getElementById('standings-body').innerHTML = html;
+}
+
+function renderPath() {
+  const pos = getMoltenoPos();
+  const hasAny = GIRONE_B.some(m => { const r=RES[m.id]; return r&&r.s1!==''; });
+  const grid = document.getElementById('path-grid');
+
+  const map = [
+    { pos:1, p1:'vs 2°A · 08:30 Faenza', finV:'🏆 1°-2°', finP:'🥉 3°-4°' },
+    { pos:2, p1:'vs 1°A · 09:15 Faenza', finV:'🏆 1°-2°', finP:'🥉 3°-4°' },
+    { pos:3, p1:'vs 3°A · 12:15 Imola',  finV:'🏅 5°-6°',  finP:'🏅 7°-8°' },
+    { pos:4, p1:'vs 4°A · 11:30 Faenza', finV:'🏅 9°-10°', finP:'🏅 11°-12°' },
+    { pos:5, p1:'vs 5°A · 10:45 Faenza', finV:'🏅 17°-18°',finP:'🏅 19°-20°' },
+    { pos:6, p1:'vs 6°A · 10:00 Faenza', finV:'🏅 21°-22°',finP:'🏅 23°-24°' },
+  ];
+
+  let html = '';
+  map.forEach(r => {
+    const isCur = hasAny && pos === r.pos;
+    html += `
+    <div class="path-card ${isCur?'current':''}">
+      <div class="pc-label">${isCur?'▶ ':''}Se finisce ${r.pos}°</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px">① ${r.p1}</div>
+      <div style="font-size:11px;margin-bottom:2px">
+        <span style="color:var(--green)">② ${r.finV}</span>
+        <span style="font-size:9px;color:var(--muted)"> (vince)</span>
+      </div>
+      <div style="font-size:11px">
+        <span style="color:#f87171">② ${r.finP}</span>
+        <span style="font-size:9px;color:var(--muted)"> (perde)</span>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function renderMatches() {
+  const cont = document.getElementById('matches-container');
+  const pos  = getMoltenoPos();
+
+  // --- GIORNI GIRONE ---
+  const days = [
+    { num:1, label:'VENERDÌ 3 APRILE', date:'Ven 3 Apr', matches: GIRONE_B.filter(m=>m.day===1) },
+    { num:2, label:'SABATO 4 APRILE',  date:'Sab 4 Apr', matches: GIRONE_B.filter(m=>m.day===2) },
+  ];
+
+  let html = '';
+
+  // Sezione "Partite di Molteno"
+  html += buildSectionHdr('🔴 PARTITE DI MOLTENO', 'Girone B — Tutte le gare');
+  html += '<div class="matches">';
+
+  const moltenoMatches = GIRONE_B.filter(m => m.team1==='MOLTENO'||m.team2==='MOLTENO')
+    .sort((a,b) => a.day - b.day || a.time.localeCompare(b.time));
+
+  moltenoMatches.forEach(m => {
+    html += buildMatchCard(m, true, false);
+  });
+  html += '</div>';
+
+  // Sezione "Altre partite girone B"
+  days.forEach(day => {
+    const others = day.matches.filter(m => m.team1!=='MOLTENO' && m.team2!=='MOLTENO');
+    if (!others.length) return;
+    html += buildDaySep(day.num, day.label, others.length);
+    html += '<div class="matches">';
+    others.sort((a,b) => a.time.localeCompare(b.time)).forEach(m => {
+      html += buildMatchCard(m, false, false);
+    });
+    html += '</div>';
+  });
+
+  cont.innerHTML = html;
+}
+
+function buildSectionHdr(title, sub) {
+  return `
+  <div class="section-hdr">
+    <h2>${title}</h2>
+    <span class="section-line"></span>
+    <span class="section-sub">${sub}</span>
+  </div>`;
+}
+
+function buildDaySep(num, label, count) {
+  return `
+  <div class="day-sep">
+    <span class="day-pill">GIORNO ${num}</span>
+    <span class="day-name">${label}</span>
+    <span class="day-line"></span>
+    <span class="day-count">${count} partite</span>
+  </div>`;
+}
+
+function buildMatchCard(m, isMoltenoMatch, isFinal) {
+  const r = RES[m.id] || { s1:'', s2:'' };
+  const hasR = r.s1 !== '' && r.s2 !== '';
+  const s1 = hasR ? +r.s1 : null;
+  const s2 = hasR ? +r.s2 : null;
+
+  const isMolt1 = m.team1 === 'MOLTENO';
+  const isMolt2 = m.team2 === 'MOLTENO';
+
+  const t1won = hasR && s1 > s2;
+  const t2won = hasR && s2 > s1;
+
+  const t1cls = `mc-tname${isMolt1?' is-molteno':''}${hasR?(t1won?' winner':' loser'):''}`;
+  const t2cls = `mc-tname${isMolt2?' is-molteno':''}${hasR?(t2won?' winner':' loser'):''}`;
+
+  const s1cls = `mc-score${hasR?(t1won?' winner-s':' loser-s'):' empty'}`;
+  const s2cls = `mc-score${hasR?(t2won?' winner-s':' loser-s'):' empty'}`;
+
+  // status pill
+  let spClass = 'sp-tbd', spLabel = 'Da giocare';
+  if (hasR) { spClass = 'sp-done'; spLabel = 'Completata'; }
+
+  // esito Molteno nella card
+  let molEsito = '';
+  if (hasR && (isMolt1||isMolt2)) {
+    const molWin = (isMolt1&&t1won)||(isMolt2&&t2won);
+    const molLose= (isMolt1&&t2won)||(isMolt2&&t1won);
+    if (molWin)  molEsito = '<span class="lbl-molteno" style="background:var(--green);color:#000">✓ VITTORIA</span>';
+    if (molLose) molEsito = '<span class="lbl-molteno" style="background:#333;color:#f87171">✗ SCONFITTA</span>';
+    if (!molWin&&!molLose&&hasR) molEsito = '<span class="lbl-molteno" style="background:#444;color:#aaa">= PAREGGIO</span>';
+  }
+
+  const dayLabel = m.day === 1 ? 'Ven 3/4' : 'Sab 4/4';
+  const cardCls = isMoltenoMatch ? 'match-card molteno' : 'match-card';
+  const barColor = isMoltenoMatch ? 'var(--red)' : 'var(--border)';
+
+  return `
+  <div class="${cardCls}" onclick="openModal(${m.id})">
+    <div class="side-bar" style="background:${barColor}"></div>
+    <div class="mc-time">
+      <div class="t">${m.time}</div>
+      <div class="d">${dayLabel}</div>
+    </div>
+    <div class="mc-sep"></div>
+    <div class="mc-venue">
+      <div class="v">${m.venue}</div>
+      <div class="vs">${m.vfull}</div>
+    </div>
+    <div class="mc-sep"></div>
+    <div class="mc-teams">
+      <div class="teams-line">
+        <span class="${t1cls}">${m.team1}</span>
+        <span class="${s1cls}">${hasR ? r.s1 : '–'}</span>
+        <div class="score-divider"></div>
+        <span class="${s2cls}">${hasR ? r.s2 : '–'}</span>
+        <span class="${t2cls}">${m.team2}</span>
+      </div>
+      ${molEsito ? `<div style="margin-top:3px">${molEsito}</div>` : ''}
+    </div>
+    <div class="mc-sep"></div>
+    <div class="mc-status"><span class="status-pill ${spClass}">${spLabel}</span></div>
+  </div>`;
+}
+
+function buildFinalCard(step, label, isGrande) {
+  const r        = RES[step.id] || { s1:'', s2:'', opponent:'' };
+  const hasR     = r.s1 !== '' && r.s2 !== '';
+  const opponent = (r.opponent && r.opponent.trim()) ? r.opponent.trim() : '';
+  const barColor = isGrande ? 'var(--gold)' : 'rgba(245,158,11,.4)';
+
+  // esito molteno (team1 è sempre Molteno nelle finali)
+  let esito = '';
+  if (hasR) {
+    const s1 = +r.s1, s2 = +r.s2;
+    if (s1 > s2)      esito = '<span class="lbl-molteno" style="background:var(--green);color:#000">✓ VITTORIA</span>';
+    else if (s2 > s1) esito = '<span class="lbl-molteno" style="background:#333;color:#f87171">✗ SCONFITTA</span>';
+    else              esito = '<span class="lbl-molteno" style="background:#444;color:#aaa">= PAREGGIO</span>';
+  }
+
+  const s1cls = hasR ? (+r.s1 >= +r.s2 ? ' winner-s' : ' loser-s') : ' empty';
+  const s2cls = hasR ? (+r.s2 >  +r.s1 ? ' winner-s' : ' loser-s') : ' empty';
+
+  // nome avversario o placeholder cliccabile
+  const oppHtml = opponent
+    ? `<span class="mc-tname">${opponent}</span>`
+    : `<span style="color:var(--muted);font-style:italic;font-size:11px">✏️ avversario…</span>`;
+
+  // data-id usato per il click
+  return `
+  <div class="match-card finale-pot" data-fin-id="${step.id}" onclick="openModalFinal('${step.id}','${step.time}','${step.venue}','${step.vfull}','${label}')">
+    <div class="side-bar" style="background:${barColor}"></div>
+    <div class="mc-time">
+      <div class="t">${step.time}</div>
+      <div class="d">Dom 5/4</div>
+    </div>
+    <div class="mc-sep"></div>
+    <div class="mc-venue">
+      <div class="v">${step.venue}</div>
+      <div class="vs">${step.vfull}</div>
+    </div>
+    <div class="mc-sep"></div>
+    <div class="mc-teams">
+      <div class="teams-line">
+        <span class="mc-tname is-molteno">MOLTENO</span>
+        <span class="mc-score${s1cls}">${hasR ? r.s1 : '–'}</span>
+        <div class="score-divider"></div>
+        <span class="mc-score${s2cls}">${hasR ? r.s2 : '–'}</span>
+        ${oppHtml}
+      </div>
+      <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">
+        <span class="lbl-final">${label}</span>
+        ${esito}
+      </div>
+    </div>
+    <div class="mc-sep"></div>
+    <div class="mc-status"><span class="status-pill ${hasR?'sp-done':'sp-tbd'}">${hasR?'Completata':'Prevista'}</span></div>
+  </div>`;
+}
+
+// ── MODAL girone ──
+function openModal(id) {
+  const m = GIRONE_B.find(x => x.id === id);
+  if (!m) return;
+  currentId = id;
+  const r = RES[id] || { s1:'', s2:'' };
+  const isMolt = m.team1==='MOLTENO'||m.team2==='MOLTENO';
+  document.getElementById('m-title').textContent = `PARTITA #${id}`;
+  document.getElementById('m-meta').textContent  = `${m.time} · ${m.vfull}${isMolt?' 🔴':''}`;
+  const t1el = document.getElementById('m-t1');
+  const t2el = document.getElementById('m-t2');
+  t1el.textContent = m.team1;
+  t2el.textContent = m.team2;
+  t1el.className = 'mb-team-name' + (m.team1==='MOLTENO'?' is-molteno':'');
+  t2el.className = 'mb-team-name' + (m.team2==='MOLTENO'?' is-molteno':'');
+  // nasconde campo avversario (solo per finali)
+  document.getElementById('m-opponent-row').style.display = 'none';
+  document.getElementById('m-s1').value = r.s1;
+  document.getElementById('m-s2').value = r.s2;
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('m-s1').focus(), 80);
+}
+
+// ── MODAL finali ──
+// Mostra campo nome avversario + punteggio
+function openModalFinal(id, time, venue, vfull, desc) {
+  currentId = id;
+  const r = RES[id] || { s1:'', s2:'', opponent:'' };
+
+  document.getElementById('m-title').textContent = desc || 'FINALE';
+  document.getElementById('m-meta').textContent  = `${time} · ${vfull}`;
+
+  // team1 = Molteno fisso, team2 = avversario (modificabile)
+  const t1el = document.getElementById('m-t1');
+  const t2el = document.getElementById('m-t2');
+  t1el.textContent = 'MOLTENO';
+  t1el.className   = 'mb-team-name is-molteno';
+  // team2 mostra il nome avversario salvato (o placeholder)
+  t2el.textContent = (r.opponent && r.opponent.trim()) ? r.opponent.trim() : 'Avversario';
+  t2el.className   = 'mb-team-name';
+
+  // mostra riga avversario
+  document.getElementById('m-opponent-row').style.display = 'flex';
+  document.getElementById('m-opponent').value = r.opponent || '';
+
+  document.getElementById('m-s1').value = r.s1;
+  document.getElementById('m-s2').value = r.s2;
+
+  // aggiorna label team2 in tempo reale mentre si digita
+  document.getElementById('m-opponent').oninput = function() {
+    t2el.textContent = this.value.trim() || 'Avversario';
+  };
+
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('m-opponent').focus(), 80);
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('m-opponent-row').style.display = 'none';
+    document.getElementById('m-opponent').oninput = null;
+    currentId = null;
+  }
+}
+
+function saveResult() {
+  if (!currentId) return;
+  const oppVal = document.getElementById('m-opponent').value.trim();
+  RES[currentId] = {
+    s1:       document.getElementById('m-s1').value.trim(),
+    s2:       document.getElementById('m-s2').value.trim(),
+    opponent: oppVal || (RES[currentId]?.opponent || ''),
+  };
+  saveRes();
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('m-opponent-row').style.display = 'none';
+  document.getElementById('m-opponent').oninput = null;
+  currentId = null;
+  render();
+  showToast('✓ Risultato salvato');
+}
+
+function clearResult() {
+  if (!currentId) return;
+  // per le finali mantieni l'avversario, cancella solo il punteggio
+  const oppVal = document.getElementById('m-opponent').value.trim();
+  if (oppVal) {
+    RES[currentId] = { s1:'', s2:'', opponent: oppVal };
+  } else {
+    delete RES[currentId];
+  }
+  saveRes();
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('m-opponent-row').style.display = 'none';
+  document.getElementById('m-opponent').oninput = null;
+  currentId = null;
+  render();
+  showToast('Risultato cancellato');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') closeModal();
+  if (e.key==='Enter' && currentId) saveResult();
+});
+
+loadRes();
+render();
+</script>
+</body>
+</html>
