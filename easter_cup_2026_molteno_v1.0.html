@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easter Cup 2026 — Molteno U16M v1.4</title>
+<title>Easter Cup 2026 — Molteno U16M v1.5</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -83,11 +83,9 @@ header {
 .st-table tr:last-child td { border-bottom:none; }
 .st-table tr:hover td { background:rgba(255,255,255,.03); }
 
-/* riga Molteno */
-.row-molteno td {
-  background: rgba(232,25,44,.08) !important;
-}
-.row-molteno:hover td { background:rgba(232,25,44,.13) !important; }
+/* riga Molteno — sfondo neutro, solo nome giallo */
+.row-molteno td { background: transparent !important; }
+.row-molteno:hover td { background:rgba(255,255,255,.03) !important; }
 
 /* posizioni */
 .pos-badge {
@@ -102,48 +100,17 @@ header {
 
 .team-cell { display:flex; align-items:center; gap:10px; }
 .team-name-st { font-weight:600; font-size:13px; }
-.team-name-st.is-molteno { color:var(--red); font-weight:800; }
-.molteno-dot { width:8px; height:8px; border-radius:50%; background:var(--red); flex-shrink:0; }
+/* MOLTENO: giallo vivo, nessun bollino */
+.team-name-st.is-molteno { color:#ffe033; font-weight:800; }
+.molteno-dot { display:none; }
 
 .pts-cell { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; }
 .pts-cell.top { color:var(--gold); }
-.pts-cell.molteno-pts { color:var(--red); }
+.pts-cell.molteno-pts { color:#ffe033; }
 
 .dr-cell { font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
 .dr-pos { color:var(--green); }
 .dr-neg { color:#f87171; }
-
-/* ── PERCORSO ── */
-.path-wrap {
-  margin: 16px 24px 0;
-  background: var(--d2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-}
-.path-title {
-  padding: 12px 18px;
-  background: linear-gradient(90deg, rgba(245,158,11,.1), transparent);
-  border-bottom: 1px solid var(--border);
-  font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px;
-  color:var(--gold); display:flex; align-items:center; gap:8px;
-}
-.path-grid { display:flex; gap:0; }
-.path-card {
-  flex:1; padding:14px 16px; border-right:1px solid var(--border);
-  transition: background .15s; cursor:default;
-}
-.path-card:last-child { border-right:none; }
-.path-card.current {
-  background: rgba(232,25,44,.1);
-  border-bottom: 3px solid var(--red);
-}
-.path-card.current .pc-pos { color:var(--red); }
-.pc-label { font-size:9px; font-weight:700; letter-spacing:1px; color:var(--muted); text-transform:uppercase; margin-bottom:6px; }
-.pc-pos   { font-family:'Bebas Neue',sans-serif; font-size:19px; line-height:1; margin-bottom:4px; color:var(--text); }
-.pc-final { font-size:11px; color:var(--gold); font-weight:600; margin-bottom:3px; }
-.pc-note  { font-size:10px; color:var(--muted); line-height:1.4; }
-.pc-ora   { font-size:10px; color:var(--green); margin-top:4px; font-family:'JetBrains Mono',monospace; }
 
 /* ── SEZIONE PARTITE ── */
 .section-hdr {
@@ -381,12 +348,6 @@ header {
   </table>
 </div>
 
-<!-- PERCORSO MOLTENO -->
-<div class="path-wrap">
-  <div class="path-title">🏆 PERCORSO MOLTENO — DOMENICA 5 APRILE</div>
-  <div class="path-grid" id="path-grid"></div>
-</div>
-
 <!-- PARTITE -->
 <div id="matches-container"></div>
 
@@ -547,9 +508,7 @@ function getMoltenoPos() {
 // ── RENDER ──
 function render() {
   renderStandings();
-  renderPath();
   renderMatches();
-  // aggiorna badge header
   const pos = getMoltenoPos();
   const posText = ['–','1°','2°','3°','4°','5°','6°'][pos] || '–';
   document.getElementById('hdr-pos').textContent = posText;
@@ -653,31 +612,6 @@ function renderMatches() {
     });
     html += '</div>';
   });
-
-  // ── DOMENICA: 2 partite Molteno ──
-  const d = DOMENICA[pos];
-  if (d) {
-    html += buildSectionHdr('🏆 DOMENICA 5 APRILE — 2 PARTITE', `Molteno attualmente ${pos}° nel girone B`);
-    html += '<div class="matches">';
-
-    // Partita 1: incrocio mattina (orario e avversario noti)
-    html += buildFinalCard(d.p1, `① INCROCIO MATTINA — vs ${d.p1.avv}`, false);
-
-    // Partita 2: due opzioni (V o P dell'incrocio)
-    html += buildFinalCard(d.p2v, `② Se VINCE incrocio: ${d.p2v.label}`, d.p2v.isGrande);
-    html += buildFinalCard(d.p2p, `② Se PERDE incrocio: ${d.p2p.label}`, false);
-
-    html += '</div>';
-  } else {
-    html += buildSectionHdr('🏆 DOMENICA 5 APRILE — 2 PARTITE', 'Inserisci i risultati del girone per vedere il percorso');
-    html += '<div class="matches">';
-    // mostra solo il riepilogo compatto
-    [1,2,3,4,5,6].forEach(p => {
-      const dd = DOMENICA[p];
-      html += buildFinalCard(dd.p1,  `Se ${p}° — ① Incrocio vs ${dd.p1.avv}`, false);
-    });
-    html += '</div>';
-  }
 
   cont.innerHTML = html;
 }
